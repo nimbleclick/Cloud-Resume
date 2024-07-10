@@ -9,18 +9,41 @@ resource "aws_s3_bucket" "domain" {
 
 resource "aws_s3_bucket_acl" "domain_bucket_acl" {
   bucket = aws_s3_bucket.domain.id
-  acl    = "public-read"
+  acl    = "private"
 }
 
-resource "aws_s3_bucket_website_configuration" "domain_config" {
+resource "aws_s3_bucket_public_access_block" "domain_bucket_access_block" {
   bucket = aws_s3_bucket.domain.id
 
-  index_document {
-    suffix = "index.html"
-  }
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
 
-  error_document {
-    key = "error.html"
+resource "aws_s3_bucket_policy" "domain_bucket_policy" {
+  bucket = aws_s3_bucket.domain.id
+  policy = data.aws_iam_policy_document.domain_bucket_permissions.json
+}
+
+data "aws_iam_policy_document" "domain_bucket_permissions" {
+  statement {
+    sid    = "AllowCloudFrontServicePrincipalReadOnly"
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
+    }
+
+    actions = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.domain.arn}/*"] 
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceArn"
+      values   = ["arn:aws:cloudfront::${data.aws_caller_identity.current.account_id}:distribution/${aws_cloudfront_distribution.cloud_resume_distribution.id}"]
+    }
   }
 }
 

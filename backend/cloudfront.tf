@@ -1,6 +1,7 @@
 resource "aws_cloudfront_distribution" "cloud_resume_distribution" {
   origin {
     domain_name = aws_s3_bucket.domain.bucket_regional_domain_name
+    origin_access_control_id = aws_cloudfront_origin_access_control.domain_bucket_oac.id
     origin_id   = var.domain_name
   }
 
@@ -47,4 +48,11 @@ resource "aws_cloudfront_distribution" "cloud_resume_distribution" {
   depends_on = [aws_acm_certificate.cert]
 
   tags = merge(var.tags)
+}
+
+resource "aws_cloudfront_origin_access_control" "domain_bucket_oac" {
+  name                              = "**.**"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
 }
