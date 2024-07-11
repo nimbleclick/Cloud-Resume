@@ -7,11 +7,6 @@ resource "aws_s3_bucket" "domain" {
   tags = merge(var.tags)
 }
 
-resource "aws_s3_bucket_acl" "domain_bucket_acl" {
-  bucket = aws_s3_bucket.domain.id
-  acl    = "private"
-}
-
 resource "aws_s3_bucket_public_access_block" "domain_bucket_access_block" {
   bucket = aws_s3_bucket.domain.id
 
