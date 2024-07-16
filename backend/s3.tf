@@ -250,7 +250,7 @@ resource "aws_s3_bucket_ownership_controls" "cloud_resume_frontend_state_bucket_
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "cloud_resume=_frontend_state_bucket_block" {
+resource "aws_s3_bucket_public_access_block" "cloud_resume_frontend_state_bucket_block" {
   bucket = aws_s3_bucket.terraform_frontend_cloud_resume.id
 
   block_public_acls       = true
