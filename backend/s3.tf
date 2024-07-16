@@ -90,7 +90,7 @@ resource "aws_s3_object" "lambda_cloudfront_invalidation_code" {
 resource "aws_s3_bucket_ownership_controls" "lambda_source_code_ownership_controls" {
   bucket = aws_s3_bucket.lambda_source_code_bucket.id
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "BucketOwnerEnforced"
   }
 }
 
@@ -110,6 +110,13 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "lambda_source_cod
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "lambda_source_code_bucket_versioning" {
+  bucket = aws_s3_bucket.lambda_source_code_bucket.id
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 
@@ -143,7 +150,7 @@ resource "aws_s3_bucket" "cloud_resume_cloudtrail_logs" {
 resource "aws_s3_bucket_ownership_controls" "cloud_resume_cloudtrail_bucket_ownership_controls" {
   bucket = aws_s3_bucket.cloud_resume_cloudtrail_logs.id
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "BucketOwnerEnforced"
   }
 }
 
@@ -163,6 +170,13 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "cloud_resume_clou
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "cloud_resume_cloudtrail_log_versioning" {
+  bucket = aws_s3_bucket.cloud_resume_cloudtrail_logs.id
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 
@@ -222,7 +236,7 @@ data "aws_partition" "current" {}
 
 data "aws_region" "current" {}
 
-# Terraform Frontend Remote State Bucket
+# Terraform Remote State Buckets
 
 resource "aws_s3_bucket" "terraform_frontend_cloud_resume" {
   bucket = var.frontend_state_bucket
@@ -232,7 +246,7 @@ resource "aws_s3_bucket" "terraform_frontend_cloud_resume" {
 resource "aws_s3_bucket_ownership_controls" "cloud_resume_frontend_state_bucket_ownership_controls" {
   bucket = aws_s3_bucket.terraform_frontend_cloud_resume.id
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "BucketOwnerEnforced"
   }
 }
 
@@ -252,5 +266,50 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "cloud_resume_fron
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "cloud_resume_frontend_state_bucket_versioning" {
+  bucket = aws_s3_bucket.terraform_frontend_web_resume.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket" "terraform_backend_cloud_resume" {
+  bucket = var.backend_state_bucket
+  tags   = merge(var.tags)
+}
+
+resource "aws_s3_bucket_ownership_controls" "cloud_resume_backend_state_bucket_ownership_controls" {
+  bucket = aws_s3_bucket.terraform_backend_cloud_resume.id
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "cloud_resume_backend_state_bucket_block" {
+  bucket = aws_s3_bucket.terraform_backend_cloud_resume.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "cloud_resume_backend_state_bucket_encryption" {
+  bucket = aws_s3_bucket.terraform_backend_cloud_resume.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "cloud_resume_backend_state_bucket_versioning" {
+  bucket = aws_s3_bucket.terraform_backend_cloud_resume.id
+  versioning_configuration {
+    status = "Enabled"
   }
 }

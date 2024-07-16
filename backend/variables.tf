@@ -2,6 +2,10 @@ variable "aws_region" {
   default = "us-east-1"
 }
 
+variable "backend_state_bucket" {
+  default = "FRONTEND_STATE_BUCKET_NAME"
+}
+
 variable "backend_state_bucket_arn" {
   default = "BACKEND_STATE_BUCKET_ARN"
 }
