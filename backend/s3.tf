@@ -40,6 +40,25 @@ data "aws_iam_policy_document" "domain_bucket_permissions" {
       values   = ["arn:aws:cloudfront::${data.aws_caller_identity.current.account_id}:distribution/${aws_cloudfront_distribution.cloud_resume_distribution.id}"]
     }
   }
+  
+  statement {
+    sid    = "AllowGitHubOIDCUpload"
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/assume_role_github"]
+    }
+
+    actions = [
+      "s3:DeleteObject",
+      "s3:GetObject",
+      "s3:GetObjectACL",
+      "s3:GetObjectTagging",
+      "s3:PutObject"
+    ]
+    resources = ["arn:aws:s3:::hirethisswellguy.com/*"]
+  }
 }
 
 resource "aws_s3_bucket" "subdomain" {
