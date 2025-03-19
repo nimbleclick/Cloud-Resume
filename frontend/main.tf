@@ -13,7 +13,6 @@ resource "aws_s3_object" "index" {
   key          = "index.html"
   source       = var.index_path
   content_type = "text/html"
-  acl          = "public-read"
   etag         = filemd5("${var.index_path}")
 }
 
@@ -22,7 +21,6 @@ resource "aws_s3_object" "error" {
   key          = "error.html"
   content_type = "text/html"
   source       = var.error_path
-  acl          = "public-read"
   etag         = filemd5("${var.error_path}")
 }
 
@@ -31,7 +29,6 @@ resource "aws_s3_object" "scripts_js" {
   key          = "js/scripts.js"
   source       = var.scripts_js_path
   content_type = "application/x-javascript"
-  acl          = "public-read"
   etag         = filemd5("${var.scripts_js_path}")
 }
 
@@ -40,7 +37,6 @@ resource "aws_s3_object" "profile_jpg" {
   key          = "img/profile.jpg"
   source       = var.profile_jpg_path
   content_type = "image/jpeg"
-  acl          = "public-read"
   etag         = filemd5("${var.profile_jpg_path}")
 }
 
@@ -49,6 +45,5 @@ resource "aws_s3_object" "styles_css" {
   key          = "css/styles.css"
   source       = var.styles_css_path
   content_type = "text/css"
-  acl          = "public-read"
   etag         = filemd5("${var.styles_css_path}")
 }
